@@ -1,2 +1,2 @@
 # apispecs
-repo for open api specs
+repo for open api specs in github
