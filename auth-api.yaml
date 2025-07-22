@@ -1,0 +1,45 @@
+openapi: 3.0.3
+info:
+  title: Auth API
+  description: OAuth2 Authorization server to generate access tokens.
+  version: 1.0.0
+
+servers:
+  - url: https://auth.example.com
+
+paths:
+  /oauth/token:
+    post:
+      summary: Generate Access Token
+      description: Get a bearer token using client credentials.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                grant_type:
+                  type: string
+                  enum: [client_credentials]
+                client_id:
+                  type: string
+                client_secret:
+                  type: string
+              required:
+                - grant_type
+                - client_id
+                - client_secret
+      responses:
+        '200':
+          description: Access token response
+          content:
+            application/json:
+              example:
+                access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                token_type: "Bearer"
+                expires_in: 3600
+        '400':
+          description: Invalid request
+        '401':
+          description: Unauthorized

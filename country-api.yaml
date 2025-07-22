@@ -1,0 +1,121 @@
+openapi: 3.0.3
+info:
+  title: Country-State-Postcode API
+  description: Dummy API to fetch countries, states, and postcodes using OAuth2 Bearer tokens.
+  version: 1.0.0
+
+servers:
+  - url: https://api.example.com/v1
+
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://auth.example.com/oauth/token
+          scopes: {}
+  
+  parameters:
+    PaginationLimit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 10
+    PaginationPage:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 1
+
+security:
+  - OAuth2: []
+
+paths:
+  /countries:
+    get:
+      summary: Get list of countries
+      parameters:
+        - $ref: '#/components/parameters/PaginationPage'
+        - $ref: '#/components/parameters/PaginationLimit'
+      responses:
+        '200':
+          description: List of countries
+          content:
+            application/json:
+              example:
+                page: 1
+                limit: 10
+                total: 195
+                data:
+                  - code: IN
+                    name: India
+                  - code: US
+                    name: United States
+        '401':
+          description: Unauthorized
+
+  /states:
+    get:
+      summary: Get list of states for a country
+      parameters:
+        - name: countryCode
+          in: query
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/PaginationPage'
+        - $ref: '#/components/parameters/PaginationLimit'
+      responses:
+        '200':
+          description: States in a country
+          content:
+            application/json:
+              example:
+                page: 1
+                limit: 10
+                total: 5
+                data:
+                  - code: KA
+                    name: Karnataka
+                  - code: MH
+                    name: Maharashtra
+        '400':
+          description: Invalid countryCode
+        '401':
+          description: Unauthorized
+
+  /postcodes:
+    get:
+      summary: Get dummy postcodes by country and state
+      parameters:
+        - name: countryCode
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: stateCode
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Dummy postcodes
+          content:
+            application/json:
+              example:
+                countryCode: IN
+                stateCode: KA
+                postcodes:
+                  - 560001
+                  - 560002
+                  - 560003
+        '400':
+          description: Missing or invalid country/state code
+        '401':
+          description: Unauthorized
